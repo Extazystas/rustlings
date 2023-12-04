@@ -34,12 +34,12 @@ fn main() {
     );
 }
 
-pub fn create_empty_list() -> Box<List> {
-    Box::new(Nil)
+pub fn create_empty_list() -> List {
+    *Box::new(Nil)
 }
 
-pub fn create_non_empty_list() -> Box<List> {
-  Box::new(Cons(1, Box::new(Cons(2, create_empty_list()))))
+pub fn create_non_empty_list() -> List {
+  *Box::new(Cons(1, Box::new(Cons(2, Box::new(Nil)))))
 }
 
 #[cfg(test)]
@@ -48,7 +48,7 @@ mod tests {
 
     #[test]
     fn test_create_empty_list() {
-        assert_eq!(List::Nil, *create_empty_list())
+        assert_eq!(List::Nil, create_empty_list())
     }
 
     #[test]
