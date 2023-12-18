@@ -27,8 +27,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation and return an Ok result of inner
 // type Color. You need to create an implementation for a tuple of three
 // integers, an array of three integers, and a slice of integers.
@@ -38,9 +36,23 @@ enum IntoColorError {
 // that correct RGB color values must be integers in the 0..=255 range.
 
 // Tuple implementation
+
+impl Color {
+    fn in_range(value: i16) -> bool {
+        (0..=255).contains(&value)
+    }
+}
+
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
+
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        if Color::in_range(tuple.0) && Color::in_range(tuple.1) && Color::in_range(tuple.2) {
+            let (red,green,blue) = (tuple.0, tuple.1, tuple.2);
+            Ok(Color {red: red as u8, green: green as u8, blue: blue as u8})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
@@ -48,6 +60,16 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        if arr.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        if Color::in_range(arr[0]) && Color::in_range(arr[1]) && Color::in_range(arr[2]) {
+            let (red,green,blue) = (arr[0], arr[1], arr[2]);
+            Ok(Color {red: red as u8, green: green as u8, blue: blue as u8})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
@@ -55,6 +77,17 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        if slice.iter().all(|i| Color::in_range(*i)) {
+            let (red, green, blue) = (slice[0], slice[1], slice[2]);
+
+            Ok(Color {red: red as u8, green: green as u8, blue: blue as u8})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
